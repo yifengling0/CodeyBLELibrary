@@ -2,12 +2,13 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
-
+using System.Text;
 using Windows.Data.Xml.Dom;
+using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.UI.Notifications;
 
-namespace BluetoothLE.Services.ToastService
+namespace BluetoothLEExplorer.Services.ToastService
 {
     /// <summary>
     /// Service to help displaying toast notifications
@@ -101,7 +102,7 @@ namespace BluetoothLE.Services.ToastService
         /// <param name="tag"></param>
         /// <param name="group"></param>
         /// <returns>A toast notification</returns>
-        [DefaultOverload]
+        [DefaultOverloadAttribute]
         public static ToastNotification PopCustomToast(XmlDocument doc, string tag, string group)
         {
             var toast = new ToastNotification(doc);

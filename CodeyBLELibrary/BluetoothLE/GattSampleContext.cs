@@ -11,10 +11,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Enumeration;
+using Windows.Foundation.Metadata;
 using Windows.UI.Popups;
-using BluetoothLEExplorer.Models;
+using BluetoothLE.Models;
 
 namespace BluetoothLE
 {
@@ -62,6 +65,11 @@ namespace BluetoothLE
         /// Gets or sets the selected characteristic
         /// </summary>
         public ObservableGattCharacteristics SelectedCharacteristic { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the selected descriptor
+        /// </summary>
+        public ObservableGattDescriptors SelectedDescriptor { get; set; } = null;
 
         /// <summary>
         /// Lock around the <see cref="BluetoothLEDevices"/>. Used in the Add/Removed/Updated callbacks
@@ -310,7 +318,9 @@ namespace BluetoothLE
         public void StartEnumeration()
         {
             // Additional properties we would like about the device.
-            string[] requestedProperties = 
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+            {
+                string[] requestedProperties =
                 {
                     "System.Devices.Aep.Category",
                     "System.Devices.Aep.ContainerId",
@@ -320,15 +330,39 @@ namespace BluetoothLE
                     "System.Devices.Aep.IsPresent",
                     "System.Devices.Aep.ProtocolId",
                     "System.Devices.Aep.Bluetooth.Le.IsConnectable",
-                    "System.Devices.Aep.SignalStrength"
+                    "System.Devices.Aep.SignalStrength",
+                    "System.Devices.Aep.Bluetooth.LastSeenTime",
+                    "System.Devices.Aep.Bluetooth.Le.IsConnectable",
                 };
 
-            // BT_Code: Currently Bluetooth APIs don't provide a selector to get ALL devices that are both paired and non-paired.
-            deviceWatcher =
-                    DeviceInformation.CreateWatcher(
-                        BTLEDeviceWatcherAQSString,
-                        requestedProperties,
-                        DeviceInformationKind.AssociationEndpoint);
+                // BT_Code: Currently Bluetooth APIs don't provide a selector to get ALL devices that are both paired and non-paired.
+                deviceWatcher = DeviceInformation.CreateWatcher(
+                    BTLEDeviceWatcherAQSString,
+                    requestedProperties,
+                    DeviceInformationKind.AssociationEndpoint);
+            }
+            else
+            {
+                string[] requestedProperties =
+                {
+                    "System.Devices.GlyphIcon",
+                    "System.Devices.Aep.Category",
+                    "System.Devices.Aep.ContainerId",
+                    "System.Devices.Aep.DeviceAddress",
+                    "System.Devices.Aep.IsConnected",
+                    "System.Devices.Aep.IsPaired",
+                    "System.Devices.Aep.IsPresent",
+                    "System.Devices.Aep.ProtocolId",
+                    "System.Devices.Aep.Bluetooth.Le.IsConnectable",
+                    "System.Devices.Aep.SignalStrength",
+                };
+
+                // BT_Code: Currently Bluetooth APIs don't provide a selector to get ALL devices that are both paired and non-paired.
+                deviceWatcher = DeviceInformation.CreateWatcher(
+                    BTLEDeviceWatcherAQSString,
+                    requestedProperties,
+                    DeviceInformationKind.AssociationEndpoint);
+            }
 
             // Register event handlers before starting the watcher.
             deviceWatcher.Added += DeviceWatcher_Added;
@@ -362,7 +396,7 @@ namespace BluetoothLE
                 deviceWatcher.EnumerationCompleted -= DeviceWatcher_EnumerationCompleted;
                 deviceWatcher.Stopped -= DeviceWatcher_Stopped;
 
-                advertisementWatcher.Received += AdvertisementWatcher_Received;
+                advertisementWatcher.Received -= AdvertisementWatcher_Received;
 
                 // Stop the watchers
                 deviceWatcher.Stop();
@@ -574,7 +608,9 @@ namespace BluetoothLE
                 ((dev.DeviceInfo.Properties.Keys.Contains("System.Devices.Aep.Bluetooth.Le.IsConnectable") &&
                     (bool)dev.DeviceInfo.Properties["System.Devices.Aep.Bluetooth.Le.IsConnectable"])) ||
                 ((dev.DeviceInfo.Properties.Keys.Contains("System.Devices.Aep.IsConnected") &&
-                    (bool)dev.DeviceInfo.Properties["System.Devices.Aep.IsConnected"]));
+                    (bool)dev.DeviceInfo.Properties["System.Devices.Aep.IsConnected"])) ||
+                ((dev.DeviceInfo.Properties.Keys.Contains("System.Devices.Aep.IsPaired") &&
+                    (bool)dev.DeviceInfo.Properties["System.Devices.Aep.IsPaired"]));
                 
             if (shouldDisplay)
             {
@@ -587,8 +623,8 @@ namespace BluetoothLE
 
                     if (!BluetoothLEDevices.Contains(dev))
                     {
-
                         BluetoothLEDevices.Add(dev);
+                        Console.WriteLine("deviceInfo: " + dev.Name);
                     }
                 }
                 finally

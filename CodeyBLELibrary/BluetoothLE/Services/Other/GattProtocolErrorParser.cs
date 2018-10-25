@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
-
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace BluetoothLE.Services.Other

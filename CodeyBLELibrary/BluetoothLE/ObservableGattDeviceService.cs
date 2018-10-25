@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,11 +10,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BluetoothLE.Services.GattUuidHelpers;
+using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using BluetoothLE.Services.GattUuidsService;
-using BluetoothLEExplorer.Models;
 
-namespace BluetoothLE
+namespace BluetoothLE.Models
 {
     /// <summary>
     /// Wrapper around <see cref="GattDeviceService"/> to make it easier to use
@@ -152,6 +151,11 @@ namespace BluetoothLE
         }
 
         /// <summary>
+        /// Gets or sets if we are using cached results
+        /// </summary>
+        public BluetoothCacheMode CacheMode { get; private set; }
+
+        /// <summary>
         /// Determines if the SelectedCharacteristic_PropertyChanged has been added
         /// </summary>
         private bool hasSelectedCharacteristicPropertyChangedHandler = false;
@@ -160,10 +164,11 @@ namespace BluetoothLE
         /// Initializes a new instance of the <see cref="ObservableGattDeviceService" /> class.
         /// </summary>
         /// <param name="service">The service this class wraps</param>
-        public ObservableGattDeviceService(GattDeviceService service)
+        public ObservableGattDeviceService(GattDeviceService service, BluetoothCacheMode cacheMode)
         {
+            CacheMode = cacheMode;
             Service = service;
-            Name = GattUuidsService.ConvertUuidToName(service.Uuid);
+            Name = GattServiceUuidHelper.ConvertUuidToName(service.Uuid);
             UUID = Service.Uuid.ToString();
             GetAllCharacteristics();
         }
@@ -222,11 +227,7 @@ namespace BluetoothLE
                     return;
                 }
 
-                CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-                var t = Task.Run(() => Service.GetCharacteristicsAsync(Windows.Devices.Bluetooth.BluetoothCacheMode.Uncached), tokenSource.Token);
-
-                GattCharacteristicsResult result = null;
-                result = await t.Result;
+                GattCharacteristicsResult result = await Service.GetCharacteristicsAsync(CacheMode);
 
                 if (result.Status == GattCommunicationStatus.Success)
                 {
@@ -248,18 +249,6 @@ namespace BluetoothLE
                 {
                     sb.Append(" - getAllCharacteristics failed with Unreachable");
                     Debug.WriteLine(sb.ToString());
-                }
-            }
-            catch (AggregateException ae)
-            {
-                foreach (var ex in ae.InnerExceptions)
-                {
-                    if (ex is TaskCanceledException)
-                    {
-                        Debug.WriteLine("Getting characteristics took too long.");
-                        Name += " - Timed out getting some characteristics";
-                        return;
-                    }
                 }
             }
             catch (Exception ex)
