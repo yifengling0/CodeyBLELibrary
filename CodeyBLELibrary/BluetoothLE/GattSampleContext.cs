@@ -636,7 +636,6 @@ namespace BluetoothLE
                     {
                         BluetoothLEDevices.Add(dev);
                         OnDeviceEnumEvent(new BLTEEnumEventArgs(){Notify = BLTEEnumEvent.Add, Device = dev});
-                        Console.WriteLine("deviceInfo: " + dev.Name);
                     }
                 }
                 finally

@@ -14,12 +14,18 @@ using BluetoothLE.Services.GattUuidHelpers;
 using BluetoothLE.Services.Other;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using Windows.Foundation;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using GattHelper.Converters;
 
 namespace BluetoothLE.Models
 {
+    public class CharacteristicsValueChangedArgs : EventArgs
+    {
+        public byte[] Data { set; get; }
+    }
+
     /// <summary>
     /// Wrapper around <see cref="GattCharacteristic"/>  to make it easier to use
     /// </summary>
@@ -73,6 +79,8 @@ namespace BluetoothLE.Models
                 }
             }
         }
+
+        public event TypedEventHandler<ObservableGattCharacteristics, CharacteristicsValueChangedArgs> ValueChanged;
 
         /// <summary>
         /// Source for <see cref="IsIndicateSet"/>
@@ -702,7 +710,7 @@ namespace BluetoothLE.Models
         private void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
             SetValue(args.CharacteristicValue);
-            Console.WriteLine(Value);
+            
         }
 
         /// <summary>
@@ -713,7 +721,7 @@ namespace BluetoothLE.Models
         {
             rawData = buffer;
             CryptographicBuffer.CopyToByteArray(rawData, out data);
-            
+            OnValueChanged(new CharacteristicsValueChangedArgs() { Data = data });
             SetValue();
         }
 
@@ -906,6 +914,11 @@ namespace BluetoothLE.Models
             {
                 PropertyChanged(this, e);
             }
+        }
+
+        protected virtual void OnValueChanged(CharacteristicsValueChangedArgs args)
+        {
+            ValueChanged?.Invoke(this, args);
         }
     }
 }
