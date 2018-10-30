@@ -22,14 +22,14 @@ namespace TestBLE
 
         static void Connect()
         {
-            CodeyConnecter.Instance.Connect();
-            CodeyConnecter.Instance.CodeyConnected += Instance_CodeyConnected;
+            Codey.Instance.Connect();
+            Codey.Instance.CodeyConnected += Instance_CodeyConnected;
         }
 
-        private static void Instance_CodeyConnected(CodeyConnecter sender, EventArgs args)
+        private static void Instance_CodeyConnected(Codey sender, EventArgs args)
         {
-            var data = new byte[3] {1, 2, 3};
-            CodeyConnecter.Instance.WriteDataAsync(data);
+            //var data = new byte[3] {1, 2, 3};
+            //Codey.Instance.WriteDataAsync(data);
         }
     }
 }
