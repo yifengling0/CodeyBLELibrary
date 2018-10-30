@@ -524,8 +524,8 @@ namespace BluetoothLE
                     Debug.WriteLine(debugMsg + "BluetoothLEDevice is " + BluetoothLEDevice.Name);
 
                     // Setup our event handlers and view model properties
-                    //BluetoothLEDevice.ConnectionStatusChanged += BluetoothLEDevice_ConnectionStatusChanged;
-                    //BluetoothLEDevice.NameChanged += BluetoothLEDevice_NameChanged;
+                    BluetoothLEDevice.ConnectionStatusChanged += BluetoothLEDevice_ConnectionStatusChanged;
+                    BluetoothLEDevice.NameChanged += BluetoothLEDevice_NameChanged;
 
                     IsPaired = DeviceInfo.Pairing.IsPaired;
                     IsConnected = BluetoothLEDevice.ConnectionStatus == BluetoothConnectionStatus.Connected;
@@ -638,14 +638,9 @@ namespace BluetoothLE
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private async void BluetoothLEDevice_NameChanged(BluetoothLEDevice sender, object args)
+        private void BluetoothLEDevice_NameChanged(BluetoothLEDevice sender, object args)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal, 
-                () =>
-            {
-                Name = BluetoothLEDevice.Name;
-            });
+            Name = BluetoothLEDevice.Name;
         }
 
         /// <summary>
@@ -653,16 +648,11 @@ namespace BluetoothLE
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private async void BluetoothLEDevice_ConnectionStatusChanged(BluetoothLEDevice sender, object args)
+        private void BluetoothLEDevice_ConnectionStatusChanged(BluetoothLEDevice sender, object args)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal, 
-                () =>
-            {
-                IsPaired = DeviceInfo.Pairing.IsPaired;
-                IsConnected = BluetoothLEDevice.ConnectionStatus == BluetoothConnectionStatus.Connected;
-                UpdateSecureConnectionStatus();
-            });
+            IsPaired = DeviceInfo.Pairing.IsPaired;
+            IsConnected = BluetoothLEDevice.ConnectionStatus == BluetoothConnectionStatus.Connected;
+            UpdateSecureConnectionStatus();
         }
 
         /// <summary>

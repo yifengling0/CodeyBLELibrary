@@ -15,12 +15,25 @@ using System.Threading.Tasks;
 
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Popups;
 using BluetoothLE.Models;
 
 namespace BluetoothLE
 {
+    public enum BLTEEnumEvent
+    {
+        Add,
+        Remove
+    }
+
+    public class BLTEEnumEventArgs
+    {
+        public BLTEEnumEvent Notify { set; get; }
+        public ObservableBluetoothLEDevice Device { set; get; }
+    }
+
     /// <summary>
     /// Context for the entire app. This is where all app wide variables are stored
     /// </summary>
@@ -57,11 +70,6 @@ namespace BluetoothLE
         public ObservableCollection<ObservableBluetoothLEDevice> BluetoothLEDevices { get; set; } = new ObservableCollection<ObservableBluetoothLEDevice>();
 
         /// <summary>
-        /// Gets or sets the selected bluetooth device
-        /// </summary>
-        public ObservableBluetoothLEDevice SelectedBluetoothLEDevice { get; set; } = null;
-
-        /// <summary>
         /// Gets or sets the selected characteristic
         /// </summary>
         public ObservableGattCharacteristics SelectedCharacteristic { get; set; } = null;
@@ -70,6 +78,8 @@ namespace BluetoothLE
         /// Gets or sets the selected descriptor
         /// </summary>
         public ObservableGattDescriptors SelectedDescriptor { get; set; } = null;
+
+        public event TypedEventHandler<GattSampleContext, BLTEEnumEventArgs> DeviceEnumEvent;
 
         /// <summary>
         /// Lock around the <see cref="BluetoothLEDevices"/>. Used in the Add/Removed/Updated callbacks
@@ -554,7 +564,8 @@ namespace BluetoothLE
                         if (dev != null)
                         {   // Found it in our displayed devices
 
-                                Debug.Assert(BluetoothLEDevices.Remove(dev), "DeviceWatcher_Removed: Failed to remove device from list");
+                            OnDeviceEnumEvent(new BLTEEnumEventArgs() { Notify = BLTEEnumEvent.Remove, Device = dev });
+                            Debug.Assert(BluetoothLEDevices.Remove(dev), "DeviceWatcher_Removed: Failed to remove device from list");
                         }
                         else
                         {   // Did not find in diplayed list, let's check the unused list
@@ -624,6 +635,7 @@ namespace BluetoothLE
                     if (!BluetoothLEDevices.Contains(dev))
                     {
                         BluetoothLEDevices.Add(dev);
+                        OnDeviceEnumEvent(new BLTEEnumEventArgs(){Notify = BLTEEnumEvent.Add, Device = dev});
                         Console.WriteLine("deviceInfo: " + dev.Name);
                     }
                 }
@@ -654,6 +666,11 @@ namespace BluetoothLE
         private void DeviceWatcher_Stopped(DeviceWatcher sender, object e)
         {
             // Implimented for completeness
+        }
+
+        protected virtual void OnDeviceEnumEvent(BLTEEnumEventArgs args)
+        {
+            DeviceEnumEvent?.Invoke(this, args);
         }
     }
 }

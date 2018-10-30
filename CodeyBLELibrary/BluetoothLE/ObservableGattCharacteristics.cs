@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -364,6 +365,32 @@ namespace BluetoothLE.Models
             }
         }
 
+        public async void WriteValueAsync(byte[] data)
+        {
+            try
+            {
+                // BT_Code: Writes the value from the buffer to the characteristic.
+                GattCommunicationStatus result = await Characteristic.WriteValueAsync(data.AsBuffer());
+
+                if (result == GattCommunicationStatus.Unreachable)
+                {
+                }
+                else if (result == GattCommunicationStatus.ProtocolError)
+                {
+                }
+            }
+            catch (Exception ex) when ((uint)ex.HResult == 0x80650003 || (uint)ex.HResult == 0x80070005)
+            {
+                // E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED or E_ACCESSDENIED
+                // This usually happens when a device reports that it support writing, but it actually doesn't.
+                Debug.WriteLine("Exception: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception: " + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Reads the value of the Characteristic
         /// </summary>
@@ -672,14 +699,10 @@ namespace BluetoothLE.Models
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
+        private void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal,
-                () =>
-            {
-                SetValue(args.CharacteristicValue);
-            });
+            SetValue(args.CharacteristicValue);
+            Console.WriteLine(Value);
         }
 
         /// <summary>

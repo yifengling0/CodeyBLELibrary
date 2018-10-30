@@ -40,6 +40,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Windows, Version=255.255.255.255, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -49,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BluetoothLE\BluetoothLE.csproj">
-      <Project>{abe6d82f-3842-4ad5-bcd1-1df08248d2bb}</Project>
-      <Name>BluetoothLE</Name>
+    <ProjectReference Include="..\CodeyBLELibrary\CodeyBLELibrary.csproj">
+      <Project>{2fd06668-7e23-4208-a748-c43605142db8}</Project>
+      <Name>CodeyBLELibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
