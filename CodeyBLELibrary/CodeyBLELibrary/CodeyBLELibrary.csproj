@@ -43,7 +43,9 @@
   <ItemGroup>
     <Compile Include="Codey.cs" />
     <Compile Include="BroadcastMessage.cs" />
-    <Compile Include="CodeyShareable.cs" />
+    <Compile Include="CodeyPacket.cs" />
+    <Compile Include="CodeyShareableFactory.cs" />
+    <Compile Include="ICodeyShareable.cs" />
     <Compile Include="CodeyProtocolParser.cs" />
     <Compile Include="CodeyProtocolSerializer.cs" />
     <Compile Include="SharedVariable.cs" />

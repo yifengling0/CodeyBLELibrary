@@ -132,7 +132,7 @@ namespace CodeyBLELibrary
             {
                 if (_parser.PushData(t))
                 {
-                    var result = _parser.Result;
+                    var result = CodeyShareableFactory.Create(_parser.GetPacket());
 
                     if (result is SharedVariable variable)
                     {
