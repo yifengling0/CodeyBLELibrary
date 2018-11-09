@@ -1,14 +1,17 @@
-﻿namespace CodeyBLELibrary
+﻿using System.Diagnostics;
+
+namespace CodeyBLELibrary
 {
-    public class BroadcastMessage : ICodeyShareable
+    public class BroadcastMessage : SharedBase
     {
-        public string Name { get; set; }
-        public void Parse(CodeyPacket packet)
+        public override void Parse(CodeyPacket packet)
         {
-            throw new System.NotImplementedException();
+            Debug.Assert(packet.Body[0] == (int)CodeyPacketType.Message);
+
+            ParseName(packet.Body);
         }
 
-        public byte[] ToPacket()
+        public override byte[] ToPacket()
         {
             throw new System.NotImplementedException();
         }

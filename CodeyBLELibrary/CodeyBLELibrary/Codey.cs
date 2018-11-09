@@ -60,7 +60,7 @@ namespace CodeyBLELibrary
         /// <param name="var"></param>
         public void SetSharedVariable(SharedVariable var)
         {
-            WriteDataAsync(_serializer.Serialize(var));
+            WriteDataAsync(var.ToPacket());
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace CodeyBLELibrary
         /// <param name="message"></param>
         public void SendBroadcastMessage(BroadcastMessage message)
         {
-            WriteDataAsync(_serializer.Serialize(message));
+            WriteDataAsync(message.ToPacket());
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace CodeyBLELibrary
         }
 
         /// <summary>
-        /// 获取codey的
+        /// 获取codey的收发端口
         /// </summary>
         private void GetCharacteristics()
         {
@@ -132,7 +132,7 @@ namespace CodeyBLELibrary
             {
                 if (_parser.PushData(t))
                 {
-                    var result = CodeyShareableFactory.Create(_parser.GetPacket());
+                    var result = CodeyShareableFactory.Generate(_parser.GetPacket());
 
                     if (result is SharedVariable variable)
                     {
@@ -182,7 +182,6 @@ namespace CodeyBLELibrary
         public const string FilterName = "Makeblock";
 
         private readonly CodeyProtocolParser _parser = new CodeyProtocolParser();
-        private CodeyProtocolSerializer _serializer = new CodeyProtocolSerializer();
 
         private const string UUID_RX = "0000ffe2-0000-1000-8000-00805f9b34fb";
         private const string UUID_TX = "0000ffe3-0000-1000-8000-00805f9b34fb";

@@ -13,7 +13,9 @@ namespace TestBLE
         static void Main(string[] args)
         {
             //Connect();
-            string data = "f3 39 46 00 02 76 61 72 00 0c 31 32 33 34 35 36 37 38 39 30 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71 72 73 74 75 76 77 78 79 7a 31 32 33 34 35 36 37 38 39 30 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71 72 fb f4 f3";
+            //string data = "f3 39 46 00 02 76 61 72 00 0c 31 32 33 34 35 36 37 38 39 30 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71 72 73 74 75 76 77 78 79 7a 31 32 33 34 35 36 37 38 39 30 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71 72 fb f4";
+            string data = "f3 f7 04 00 04 01 00 00 05 f4";
+            //string data = "f3 f9 06 00 03 6d 73 67 31 00 7b f4";
 
             byte[] array = strToToHexByte(data);
 
@@ -24,6 +26,7 @@ namespace TestBLE
                 if (parser.PushData(b))
                 {
                     var packet = parser.GetPacket();
+                    ICodeyShareable shareable = CodeyShareableFactory.Generate(packet);
                 }
             }
             
