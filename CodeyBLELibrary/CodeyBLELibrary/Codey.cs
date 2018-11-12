@@ -86,6 +86,12 @@ namespace CodeyBLELibrary
             SendBroadcastMessage(new BroadcastMessage(name));
         }
 
+        public void Send(ICodeyShareable var)
+        {
+            CodeyPacket packet = new CodeyPacket { Body = var.ToArray() };
+            WriteDataAsync(CodeyProtocolSerializer.Serialize(packet));
+        }
+
         /// <summary>
         /// 枚举蓝牙设备
         /// </summary>
@@ -113,11 +119,6 @@ namespace CodeyBLELibrary
             Send(message);
         }
 
-        private void Send(ICodeyShareable var)
-        {
-            CodeyPacket packet = new CodeyPacket { Body = var.ToArray() };
-            WriteDataAsync(CodeyProtocolSerializer.Serialize(packet));
-        }
 
         private SharedVariable GetVariable(string name)
         {
