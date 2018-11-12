@@ -12,28 +12,30 @@ namespace TestBLE
     {
         static void Main(string[] args)
         {
-            //Connect();
-            //string data = "f3 39 46 00 02 76 61 72 00 0c 31 32 33 34 35 36 37 38 39 30 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71 72 73 74 75 76 77 78 79 7a 31 32 33 34 35 36 37 38 39 30 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71 72 fb f4";
-            string data = "f3 f7 04 00 04 01 00 00 05 f4";
-            //string data = "f3 f9 06 00 03 6d 73 67 31 00 7b f4";
+            Connect();
 
-            byte[] array = strToToHexByte(data);
-
-            CodeyProtocolParser parser = new CodeyProtocolParser();
-
-            foreach (var b in array)
+            while (true)
             {
-                if (parser.PushData(b))
+                var data = Console.ReadKey().KeyChar;
+
+                if (data != 'Q')
                 {
-                    var packet = parser.GetPacket();
-                    ICodeyShareable shareable = CodeyShareableFactory.Generate(packet);
-                }
-            }
-            
+                    Thread.Sleep(1000);
 
-            while (Console.ReadKey().KeyChar !='Q')
-            {
-                Thread.Sleep(1000);
+                    if (data == 'u')
+                    {
+                        Codey.Instance.SetValue("pc", 1000);
+                    }
+
+                    if (data == 'y')
+                    {
+                        Codey.Instance.SendMessage("pc_msg");
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
@@ -53,12 +55,23 @@ namespace TestBLE
         {
             Codey.Instance.Connect();
             Codey.Instance.CodeyConnected += Instance_CodeyConnected;
+            Codey.Instance.VariableValueChanged += Instance_VariableValueChanged;
+            Codey.Instance.MessageReceived += Instance_MessageReceived;
+        }
+
+        private static void Instance_MessageReceived(Codey sender, MessageReceivedArgs args)
+        {
+            Console.WriteLine("msg:" + args.Message.Name);
+        }
+
+        private static void Instance_VariableValueChanged(Codey sender, VariableValueChangedArgs args)
+        {
+            Console.WriteLine(args.Variable.Name + ":" + args.Variable.Value);
         }
 
         private static void Instance_CodeyConnected(Codey sender, EventArgs args)
         {
-            //var data = new byte[3] {1, 2, 3};
-            //Codey.Instance.WriteDataAsync(data);
+            
         }
     }
 }

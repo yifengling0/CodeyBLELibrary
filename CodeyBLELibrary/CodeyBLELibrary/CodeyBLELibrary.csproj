@@ -45,6 +45,7 @@
     <Compile Include="BroadcastMessage.cs" />
     <Compile Include="CodeyPacket.cs" />
     <Compile Include="CodeyPacketType.cs" />
+    <Compile Include="CodeyProtocolSerializer.cs" />
     <Compile Include="CodeyShareableFactory.cs" />
     <Compile Include="Heartbeat.cs" />
     <Compile Include="ICodeyShareable.cs" />

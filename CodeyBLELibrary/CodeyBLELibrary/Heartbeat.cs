@@ -23,19 +23,13 @@ namespace CodeyBLELibrary
             Code = byteList.ToArray();
         }
 
-        public byte[] ToPacket()
+        public byte[] ToArray()
         {
             List<byte> byteList = new List<byte>();
 
-            byteList.Add(CodeyPacket.Header);
-            byteList.Add(0xf7);
-            byteList.Add(0x04);
-            byteList.Add(0x00);
             byteList.Add(0x05);
             byteList.Add(0x00);
             byteList.Add(0x00);
-            byteList.Add(0x09);
-            byteList.Add(CodeyPacket.EndCode);
 
             return byteList.ToArray();
         }

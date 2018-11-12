@@ -96,7 +96,7 @@ namespace GattServicesLibrary.Characteristics
         //    NotifyValue();
         //}
 
-        public async void NotifyImmediatelyForCategory(AlertCategoryId categoryId)
+        public void NotifyImmediatelyForCategory(AlertCategoryId categoryId)
         {
             if ((categoryId != AlertCategoryId.SimpleAlert) && (categoryId != AlertCategoryId.All))
             {

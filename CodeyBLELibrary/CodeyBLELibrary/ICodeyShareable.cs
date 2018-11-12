@@ -4,6 +4,6 @@
     {
         string Name { set; get; }
         void Parse(CodeyPacket packet);
-        byte[] ToPacket();
+        byte[] ToArray();
     }
 }

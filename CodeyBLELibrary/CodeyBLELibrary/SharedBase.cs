@@ -38,6 +38,6 @@ namespace CodeyBLELibrary
         }
 
         public abstract void Parse(CodeyPacket packet);
-        public abstract  byte[] ToPacket();
+        public abstract  byte[] ToArray();
     }
 }
