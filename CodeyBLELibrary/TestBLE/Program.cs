@@ -71,7 +71,8 @@ namespace TestBLE
 
         private static void Instance_CodeyConnected(Codey sender, EventArgs args)
         {
-            
+            Codey.Instance.SetValue("pc", 1000);
+            Codey.Instance.SendMessage("pc_msg");
         }
     }
 }

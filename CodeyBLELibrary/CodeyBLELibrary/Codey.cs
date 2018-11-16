@@ -56,40 +56,79 @@ namespace CodeyBLELibrary
             EnumDevices();
         }
 
-
+        /// <summary>
+        /// 设置变量的值
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value">字符型</param>
         public void SetValue(string name, string value)
         {
             SetSharedVariable(new SharedVariable(name, value));
         }
 
+        /// <summary>
+        /// 设置变量的值
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value">数字型</param>
         public void SetValue(string name, Int32 value)
         {
             SetSharedVariable(new SharedVariable(name, value));
         }
 
+        /// <summary>
+        /// 获取变量值
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public string GetStringValue(string name)
         {
             var variable = GetVariable(name);
 
-            return (variable.Value);
+            return variable == null ? string.Empty : variable.Value;
         }
 
+        /// <summary>
+        /// 获取变量值
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public Int32 GetIntValue(string name)
         {
             var variable = GetVariable(name);
 
-            return (variable.IntValue());
+            // codey 默认值是0，所以这里使用0
+            return variable?.IntValue() ?? 0;
         }
 
+        /// <summary>
+        /// 发广播
+        /// </summary>
+        /// <param name="name"></param>
         public void SendMessage(string name)
         {
             SendBroadcastMessage(new BroadcastMessage(name));
         }
 
+        /// <summary>
+        /// 发送变量/消息统一接口
+        /// </summary>
+        /// <param name="var"></param>
         public void Send(ICodeyShareable var)
         {
             CodeyPacket packet = new CodeyPacket { Body = var.ToArray() };
             WriteDataAsync(CodeyProtocolSerializer.Serialize(packet));
+        }
+
+        /// <summary>
+        /// 是否设备已经连接成功
+        /// </summary>
+        public bool IsConnected
+        {
+            get
+            {
+                return SelectedDevice.IsConnected;
+            }
         }
 
         /// <summary>
