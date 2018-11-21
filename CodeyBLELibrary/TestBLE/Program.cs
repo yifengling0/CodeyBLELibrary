@@ -62,6 +62,10 @@ namespace TestBLE
         private static void Instance_MessageReceived(Codey sender, MessageReceivedArgs args)
         {
             Console.WriteLine("msg:" + args.Message.Name);
+            if (args.Message.Name.Equals("Start"))
+            {
+                Codey.Instance.SendMessage("start");
+            }
         }
 
         private static void Instance_VariableValueChanged(Codey sender, VariableValueChangedArgs args)
@@ -71,8 +75,7 @@ namespace TestBLE
 
         private static void Instance_CodeyConnected(Codey sender, EventArgs args)
         {
-            Codey.Instance.SetValue("pc", 1000);
-            Codey.Instance.SendMessage("pc_msg");
+
         }
     }
 }
