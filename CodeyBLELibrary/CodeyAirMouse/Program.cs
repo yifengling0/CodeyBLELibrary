@@ -46,6 +46,8 @@ namespace CodeyAirMouse
             //因为小奔自己发消息不能自己接受，所以将消息返回去，而且只能用小写。
             if (args.Message.Name.Equals("Start"))
             {
+                Codey.Instance.SetValue("k1", 20);
+                Codey.Instance.SetValue("k2", 20);
                 Codey.Instance.SendMessage("start");
             }
 
@@ -95,8 +97,6 @@ namespace CodeyAirMouse
         private static void Instance_CodeyConnected(Codey sender, EventArgs args)
         {
             Console.WriteLine("Codey is connected!");
-            Codey.Instance.SetValue("k1", 10);
-            Codey.Instance.SetValue("k2", 10);
         }
     }
 }
